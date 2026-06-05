@@ -9,8 +9,12 @@ class ScoreLookupService
 {
     public function findBySbd(string $sbd): ?Score
     {
-        return Cache::remember("score_{$sbd}", 300, function () use ($sbd) {
-            return Score::where('sbd', $sbd)->first();
+        $scoreData = Cache::remember("score_{$sbd}", 300, function () use ($sbd) {
+            $score = Score::where('sbd', $sbd)->first();
+            return $score ? $score->toArray() : null;
         });
+
+        // Nếu có dữ liệu, chuyển mảng đó ngược lại thành Object Score để đúng return type
+        return $scoreData ? (new Score())->newFromBuilder($scoreData) : null;
     }
 }
