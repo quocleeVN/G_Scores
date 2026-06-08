@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use SplFileObject;
@@ -95,6 +96,10 @@ class ScoreSeeder extends Seeder
 
         $this->command?->info("Import completed: {$imported} rows inserted, {$errors} errors.");
         Log::info("ScoreSeeder: Import finished", ['imported' => $imported, 'errors' => $errors]);
+
+        // Gọi command để tạo thống kê vào bảng score_statistics
+        Artisan::call('scores:generate-statistics');
+        $this->command?->info('Đã tạo thống kê điểm thi.');
     }
 
     protected function insertBatch(array &$rows, int &$imported, int &$errors): void
